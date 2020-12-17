@@ -1,0 +1,26 @@
+version: "0.1"
+addresses:
+  shared@username.mailscript.com:
+    keys:
+      - name: Shared write key
+        read: false
+        write: true
+      - name: owner
+        read: true
+        write: true
+accessories:
+  - name: shared@username.mailscript.com
+    type: mailscript-email
+    address: shared@username.mailscript.com
+    key: owner
+workflows:
+  - name: redirect to external
+    trigger:
+      accessory: shared@username.mailscript.com
+      config:
+        criterias: []
+    actions:
+      - accessory: shared@username.mailscript.com
+        config:
+          type: alias
+          alias: address@external.com

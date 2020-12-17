@@ -2,7 +2,7 @@
 
 You can use this template to setup shared access to an address you control. Addresses use `scoped keys` (`read`/`write`) to be able to listen in to incoming messages and send messages from such address. By setting up redirects from an address an providing a `write-scoped key` to your peers you can easily setup a shared address.
 
-## Yaml setup
+## Workflow
 
 ```yml
 version: "0.1"
