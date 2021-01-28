@@ -5,7 +5,7 @@ You can use this template to setup shared access to an address you control. Addr
 ## Workflow
 
 ```yml
-version: "0.1"
+version: "0.2"
 addresses:
   team@$username.mailscript.com:
     keys:
