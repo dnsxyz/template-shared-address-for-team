@@ -7,7 +7,7 @@ You can use this template to setup shared access to an address you control. Addr
 ```yml
 version: "0.1"
 addresses:
-  shared@username.mailscript.com:
+  team@$username.mailscript.com:
     keys:
       - name: Shared write key
         read: false
@@ -15,22 +15,37 @@ addresses:
       - name: owner
         read: true
         write: true
-accessories:
-  - name: shared@username.mailscript.com
+actions:
+  - name: forward-to-alice
     type: mailscript-email
-    address: shared@username.mailscript.com
-    key: owner
+    config:
+      type: forward
+      forward: alice@example.com
+      from: team@$username.mailscript.com
+      key: owner
+  - name: forward-to-jane
+    type: mailscript-email
+    config:
+      type: forward
+      forward: jane@example.com
+      from: team@$username.mailscript.com
+      key: owner
+  - name: forward-to-brigit
+    type: mailscript-email
+    config:
+      type: forward
+      forward: brigit@example.com
+      from: team@$username.mailscript.com
+      key: owner
+  - name: forward-to-team
+    list:
+      - forward-to-alice
+      - forward-to-jane
+      - forward-to-brigit
 workflows:
-  - name: redirect to external
-    trigger:
-      accessory: shared@username.mailscript.com
-      config:
-        criterias: []
-    actions:
-      - accessory: shared@username.mailscript.com
-        config:
-          type: alias
-          alias: address@external.com
+  - name: redirect to team
+    input: team@$username.mailscript.com
+    action: forward-to-team
 ```
 
 ## Manual setup
@@ -38,16 +53,41 @@ workflows:
 Claim an address on your username's subdomain:
 
 ```sh
-mailscript addresses:add --address shared@username.mailscript.com
+mailscript addresses:add --address shared@<username>.mailscript.com
 ```
 
-Set redirects to external (existing) addresses (you'll have to verify ownership of such addresses):
+Set forwards to external (existing) addresses (you'll have to verify ownership of such addresses):
+
+```sh
+mailscript actions:add \
+  --name forward-to-alice \
+  --forward alice@example.com \
+  --from shared@<username>.mailscript.com
+
+mailscript actions:add \
+  --name forward-to-jane \
+  --forward jane@example.com \
+  --from shared@<username>.mailscript.com
+
+mailscript actions:add \
+  --name forward-to-brigit \
+  --forward brigit@example.com \
+  --from shared@<username>.mailscript.com
+
+mailscript actions:combine \
+  --name forward-to-team \
+  --action forward-to-alice \
+  --action forward-to-jane \
+  --action forward-to-brigit
+```
+
+Setup a workflow to redirecting incoming emails at `shared@<username>.mailscript.com` to your team:
 
 ```sh
 mailscript workflows:add \
-  --name "redirect to external" \
-  --trigger shared@username.mailscript.com \
-  --alias address@external.com
+  --name "redirect to team" \
+  --input shared@<username>.mailscript.com
+  --action forward-to-team
 ```
 
 Create and get write key to share with peers:
